@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEDZX v5 - Free Fire Sensitivity Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Neon Red Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        /* Main Container */
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            background: rgba(15, 5, 5, 0.75);
+            border: 2px solid #ff003c;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(255, 0, 60, 0.4), inset 0 0 15px rgba(255, 0, 60, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            text-align: center;
+            color: #ff003c;
+            text-shadow: 0 0 10px #ff003c, 0 0 20px #ff003c, 0 0 40px #ff003c;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* Lock Overlay */
+        #lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 2, 2, 0.95);
+            border-radius: 14px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .lock-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #ff003c;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #ff003c;
+        }
+
+        .btn-tiktok {
+            background: #000;
+            color: #fff;
+            border: 2px solid #ff003c;
+            padding: 14px 28px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.6);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .btn-tiktok:hover {
+            background: #ff003c;
+            color: #fff;
+            box-shadow: 0 0 30px #ff003c;
+            transform: scale(1.05);
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #ff4d6d;
+            font-weight: bold;
+        }
+
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(20, 0, 5, 0.8);
+            border: 1px solid #ff003c;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 0, 60, 0.2);
+        }
+
+        select:focus, input[type="text"]:focus, textarea:focus {
+            border-color: #ff4d6d;
+            box-shadow: 0 0 15px #ff003c;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg, #ff003c, #800020);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.5);
+            transition: 0.3s;
+        }
+
+        .btn-action:hover {
+            box-shadow: 0 0 35px #ff003c;
+            transform: translateY(-2px);
+        }
+
+        /* Results Box */
+        .results-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(30, 0, 10, 0.8);
+            border: 1px dashed #ff003c;
+            border-radius: 8px;
+        }
+
+        .sens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .sens-card {
+            background: rgba(10, 0, 2, 0.9);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #ff003c;
+            text-align: center;
+        }
+
+        .sens-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #ff003c;
+            font-weight: bold;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 35px;
+            border-top: 1px solid rgba(255, 0, 60, 0.3);
+            padding-top: 20px;
+        }
+
+        .comment-item {
+            background: rgba(20, 5, 10, 0.6);
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .comment-user {
+            color: #ff003c;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .comment-text {
+            color: #ddd;
+            margin-top: 4px;
+        }
+
+        /* Hidden Admin Trigger & Modal */
+        .admin-trigger {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            opacity: 0.2;
+            cursor: pointer;
+            font-size: 12px;
+            color: #ff003c;
+        }
+
+        .admin-trigger:hover {
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #110305;
+            border: 2px solid #ff003c;
+            width: 90%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 12px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px #ff003c;
+        }
+
+        .close-btn {
+            float: right;
+            color: #ff003c;
+            font-size: 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .stat-card {
+            background: rgba(255, 0, 60, 0.1);
+            border: 1px solid #ff003c;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            padding: 8px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(255, 0, 60, 0.2);
+            color: #ff003c;
+        }
+
+        .btn-ban {
+            background: #ff003c;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .banned-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            color: red;
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ban Screen -->
+    <div id="banned-screen" class="banned-screen">
+        <h1 style="font-size: 3rem;">SİTEDEN ENGELLENDİNİZ</h1>
+        <p>wedzx v5 kurallarını ihlal ettiğiniz için erişiminiz kesilmiştir.</p>
+    </div>
+
+    <!-- Canvas Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Main Tool Container -->
+    <div class="container">
+        
+        <!-- TikTok Follow Gateway Overlay -->
+        <div id="lock-overlay">
+            <div class="lock-title">WEDZX V5 KİLİTLİ</div>
+            <p>Sistemi ve Hassasiyet Oluşturucuyu Kullanmak İçin TikTok Hesabımızı Takip Etmelisiniz!</p>
+            <a href="https://www.tiktok.com/@wedzx_" target="_blank" class="btn-tiktok" id="tiktok-link" onclick="playClickSound(); unlockSite();">
+                TAKİP ET: @wedzx_
+            </a>
+            <p style="font-size:0.8rem; color:#888; margin-top:10px;">Takip ettikten sonra sayfa kilidi otomatik kalkacaktır.</p>
+        </div>
+
+        <h1>WEDZX v5</h1>
+
+        <!-- Sensitivity Generator Form -->
+        <div class="form-group">
+            <label for="brand">Cihaz Markası Seçin:</label>
+            <select id="brand" onchange="playClickSound()">
+                <option value="iPhone">iPhone (iOS)</option>
+                <option value="Samsung">Samsung</option>
+                <option value="Xiaomi">Xiaomi / Redmi / Poco</option>
+                <option value="Realme">Realme</option>
+                <option value="OPPO">OPPO</option>
+                <option value="Vivo">Vivo</option>
+                <option value="Other">Diğer Markalar</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="model">Telefon Modelini Yazın:</label>
+            <input type="text" id="model" placeholder="Örn: iPhone 13 Pro / Samsung S21 / Poco X3" onfocus="playClickSound()">
+        </div>
+
+        <button class="btn-action" onclick="playClickSound(); generateSens();">ÖZEL HASSASİYET OLUŞTUR</button>
+
+        <!-- Sensitivity Output Box -->
+        <div class="results-box" id="results">
+            <h2 style="color:#ff003c; font-family:'Orbitron'; text-align:center;" id="res-title">SİSTEM HASSASİYETİ</h2>
+            <div class="sens-grid">
+                <div class="sens-card"><span>Genel</span><div class="sens-value" id="s-gen">0</div></div>
+                <div class="sens-card"><span>Kırmızı Nokta</span><div class="sens-value" id="s-red">0</div></div>
+                <div class="sens-card"><span>2x Dürbün</span><div class="sens-value" id="s-2x">0</div></div>
+                <div class="sens-card"><span>4x Dürbün</span><div class="sens-value" id="s-4x">0</div></div>
+                <div class="sens-card"><span>AWP Dürbünü</span><div class="sens-value" id="s-awp">0</div></div>
+                <div class="sens-card"><span>Serbest Bakış</span><div class="sens-value" id="s-free">0</div></div>
+            </div>
+            <p style="text-align: center; margin-top: 15px; color: #ff4d6d; font-weight: bold;" id="dpi-rec"></p>
+        </div>
+
+        <!-- Comments Area -->
+        <div class="comments-section">
+            <h3 style="color:#ff003c; font-family:'Orbitron'; margin-bottom:10px;">KULLANICI YORUMLARI</h3>
+            <div class="form-group">
+                <input type="text" id="c-name" placeholder="Adınız / Kullanıcı Adınız" style="margin-bottom:8px;" onfocus="playClickSound()">
+                <textarea id="c-msg" rows="2" placeholder="Yorumunuzu buraya yazın..." onfocus="playClickSound()"></textarea>
+                <button class="btn-action" style="margin-top:8px; padding:8px;" onclick="playClickSound(); addComment();">Yorum Gönder</button>
+            </div>
+            <div id="comment-list">
+                <!-- Dynamic Comments -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Secret Admin Trigger (Footer Bottom Right) -->
+    <div class="admin-trigger" onclick="playClickSound(); openAdminModal()">[Admin Panel]</div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="admin-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="playClickSound(); closeAdminModal()">&times;</span>
+            <h2 style="color:#ff003c; font-family:'Orbitron'; margin-bottom:15px;">WEDZX v5 ADMIN PANELİ</h2>
+            
+            <div id="admin-login-box">
+                <div class="form-group">
+                    <label>Admin Şifresi:</label>
+                    <input type="password" id="admin-pass" style="width: 100%; padding: 10px; background: #000; border: 1px solid #ff003c; color: #fff;" onfocus="playClickSound()">
+                </div>
+                <button class="btn-action" onclick="playClickSound(); loginAdmin()">Giriş Yap</button>
+            </div>
+
+            <div id="admin-dashboard" style="display: none;">
+                <div class="stat-card">
+                    <b>Gerçek Toplam Ziyaretçi:</b> <span id="stat-visits">0</span>
+                </div>
+                
+                <h3 style="color:#ff003c; font-size:1.1rem; margin-top:15px;">Hassasiyet Alan Kullanıcılar / Cihazlar</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Marka / Model</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-log-list">
+                        <!-- Dynamic Logs -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Web Audio API Sound Generator ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playClickSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.08);
+
+            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        }
+
+        function playSuccessSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+            
+            [523.25, 659.25, 783.99].forEach((freq, index) => {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + (index * 0.08));
+
+                gainNode.gain.setValueAtTime(0.1, now + (index * 0.08));
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + (index * 0.08) + 0.15);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start(now + (index * 0.08));
+                osc.stop(now + (index * 0.08) + 0.15);
+            });
+        }
+
+        // --- 1. Canvas Background (Optimized Neon Red Network Mesh - More Nodes, Balanced Distance) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = [];
+        // Sayıyı 65'ten 85'e çıkarıp bağlantı mesafesini optimize ederek performansı düşürmeden ağı yoğunlaştırdık
+        const particleCount = 85;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 1.2,
+                vy: (Math.random() - 0.5) * 1.2,
+                radius: Math.random() * 1.8 + 0.8
+            });
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Render Nodes & Lines
+            for (let i = 0; i < particleCount; i++) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff003c';
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = '#ff003c';
+                ctx.fill();
+
+                for (let j = i + 1; j < particleCount; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+
+                    // Bağlantı mesafesini hafifçe optimize ettik (100px) ki çok fazla çizgi oluşturup mobil cihazları yormasın
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(255, 0, 60, ${0.8 - dist / 100})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // --- 2. Real Analytics & Security Init ---
+        let visitCount = parseInt(localStorage.getItem('wedzx_visits') || '0');
+        let isBanned = localStorage.getItem('wedzx_banned') === 'true';
+
+        if (isBanned) {
+            document.getElementById('banned-screen').style.display = 'flex';
+        } else {
+            visitCount++;
+            localStorage.setItem('wedzx_visits', visitCount);
+        }
+
+        // --- 3. TikTok Lock Logic ---
+        function unlockSite() {
+            setTimeout(() => {
+                document.getElementById('lock-overlay').style.display = 'none';
+                localStorage.setItem('wedzx_followed', 'true');
+            }, 2500);
+        }
+
+        if (localStorage.getItem('wedzx_followed') === 'true') {
+            document.getElementById('lock-overlay').style.display = 'none';
+        }
+
+        // --- 4. Sensitivity Logic Engine ---
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateSens() {
+            const brand = document.getElementById('brand').value;
+            const model = document.getElementById('model').value.trim();
+
+            if (!model) {
+                alert('Lütfen telefon modelinizi girin!');
+                return;
+            }
+
+            playSuccessSound();
+
+            let minSens = 130;
+            let maxSens = 200;
+
+            if (brand === 'iPhone') {
+                minSens = 80;
+                maxSens = 150;
+            }
+
+            const gen = getRandomInt(minSens, maxSens);
+            const red = getRandomInt(minSens, maxSens);
+            const x2 = getRandomInt(minSens, maxSens);
+            const x4 = getRandomInt(minSens, maxSens);
+            const awp = getRandomInt(minSens, maxSens);
+            const free = getRandomInt(minSens, maxSens);
+
+            document.getElementById('s-gen').innerText = gen;
+            document.getElementById('s-red').innerText = red;
+            document.getElementById('s-2x').innerText = x2;
+            document.getElementById('s-4x').innerText = x4;
+            document.getElementById('s-awp').innerText = awp;
+            document.getElementById('s-free').innerText = free;
+
+            if (brand === 'iPhone') {
+                document.getElementById('dpi-rec').innerText = "Önerilen iOS Tam İmleç Hızı: 120 (Maksimum Hassas)";
+            } else {
+                document.getElementById('dpi-rec').innerText = "Önerilen DPI Değeri: " + getRandomInt(410, 600) + " DPI";
+            }
+
+            document.getElementById('res-title').innerText = `${brand.toUpperCase()} (${model.toUpperCase()}) ÖZEL AYAR`;
+            document.getElementById('results').style.display = 'block';
+
+            let logs = JSON.parse(localStorage.getItem('wedzx_logs') || '[]');
+            logs.unshift({
+                date: new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'}),
+                device: `${brand} - ${model}`,
+                id: Date.now()
+            });
+            localStorage.setItem('wedzx_logs', JSON.stringify(logs));
+        }
+
+        // --- 5. Comments Engine ---
+        function loadComments() {
+            const comments = JSON.parse(localStorage.getItem('wedzx_comments') || '[]');
+            const list = document.getElementById('comment-list');
+            list.innerHTML = '';
+            comments.forEach(c => {
+                list.innerHTML += `
+                    <div class="comment-item">
+                        <div class="comment-user">${escapeHtml(c.name)}</div>
+                        <div class="comment-text">${escapeHtml(c.msg)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function addComment() {
+            const name = document.getElementById('c-name').value.trim();
+            const msg = document.getElementById('c-msg').value.trim();
+
+            if (!name || !msg) {
+                alert('Lütfen isim ve yorum doldurun.');
+                return;
+            }
+
+            let comments = JSON.parse(localStorage.getItem('wedzx_comments') || '[]');
+            comments.unshift({ name, msg });
+            localStorage.setItem('wedzx_comments', JSON.stringify(comments));
+
+            document.getElementById('c-name').value = '';
+            document.getElementById('c-msg').value = '';
+            loadComments();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        loadComments();
+
+        // --- 6. Secret Admin Panel System ---
+        function openAdminModal() {
+            document.getElementById('admin-modal').style.display = 'flex';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').style.display = 'none';
+        }
+
+        function loginAdmin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'wedzxV4xMavi') {
+                playSuccessSound();
+                document.getElementById('admin-login-box').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+                renderAdminData();
+            } else {
+                alert('Hatalı Admin Şifresi!');
+            }
+        }
+
+        function renderAdminData() {
+            document.getElementById('stat-visits').innerText = localStorage.getItem('wedzx_visits') || '0';
+            
+            const logs = JSON.parse(localStorage.getItem('wedzx_logs') || '[]');
+            const logList = document.getElementById('admin-log-list');
+            logList.innerHTML = '';
+
+            logs.forEach(log => {
+                logList.innerHTML += `
+                    <tr>
+                        <td>${log.date}</td>
+                        <td>${escapeHtml(log.device)}</td>
+                        <td><span style="color:#00ff66;">Aktif Ziyaretçi</span></td>
+                        <td><button class="btn-ban" onclick="playClickSound(); banUser()">Kullanıcıyı Banla</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function banUser() {
+            if (confirm("Bu cihazı/kullanıcıyı siteden banlamak istediğinize emin misiniz?")) {
+                localStorage.setItem('wedzx_banned', 'true');
+                alert("Kullanıcı banlandı! Sayfa yenilendiğinde erişimi kısıtlanacak.");
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
+
