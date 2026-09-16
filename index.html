@@ -586,9 +586,9 @@
             let maxSens = 200;
 
             if (brand === 'iPad') {
-                // iPad ekran alanı daha geniş olduğu için özel düşük-optimum aralık (Tablet Açıları)
-                minSens = 65;
-                maxSens = 125;
+                // İstediğiniz gibi iPad için hassasiyet aralığı 130 ile 200 arasında ayarlandı
+                minSens = 130;
+                maxSens = 200;
             } else if (brand === 'iPhone') {
                 minSens = 80;
                 maxSens = 150;
@@ -609,7 +609,7 @@
             document.getElementById('s-free').innerText = free;
 
             if (brand === 'iPad') {
-                document.getElementById('dpi-rec').innerText = "Önerilen Tablet HUD DPI / İşaretçi: Geniş Ekran Akıcı Mod (105 Hz Optimizasyon)";
+                document.getElementById('dpi-rec').innerText = "Önerilen Tablet HUD DPI / İmleç: 130-200 Arası Özel Eşleşme (Geniş Ekran Akıcı Mod)";
             } else if (brand === 'iPhone') {
                 document.getElementById('dpi-rec').innerText = "Önerilen iOS Tam İmleç Hızı: 120 (Maksimum Hassas)";
             } else {
