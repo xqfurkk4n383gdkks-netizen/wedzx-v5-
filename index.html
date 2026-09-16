@@ -347,6 +347,7 @@
         <div class="form-group">
             <label for="brand">Cihaz Markası Seçin:</label>
             <select id="brand" onchange="playClickSound()">
+                <option value="iPad">Apple iPad (Tablet)</option>
                 <option value="iPhone">iPhone (iOS)</option>
                 <option value="Samsung">Samsung</option>
                 <option value="Xiaomi">Xiaomi / Redmi / Poco</option>
@@ -358,8 +359,8 @@
         </div>
 
         <div class="form-group">
-            <label for="model">Telefon Modelini Yazın:</label>
-            <input type="text" id="model" placeholder="Örn: iPhone 13 Pro / Samsung S21 / Poco X3" onfocus="playClickSound()">
+            <label for="model">Cihaz / Tablet Modelini Yazın:</label>
+            <input type="text" id="model" placeholder="Örn: iPad Pro 11 / iPad Air 5 / iPad 9. Gen" onfocus="playClickSound()">
         </div>
 
         <button class="btn-action" onclick="playClickSound(); generateSens();">ÖZEL HASSASİYET OLUŞTUR</button>
@@ -494,7 +495,6 @@
         window.addEventListener('resize', resizeCanvas);
 
         const particles = [];
-        // Sayıyı 65'ten 85'e çıkarıp bağlantı mesafesini optimize ederek performansı düşürmeden ağı yoğunlaştırdık
         const particleCount = 85;
 
         for (let i = 0; i < particleCount; i++) {
@@ -510,7 +510,6 @@
         function animateCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Render Nodes & Lines
             for (let i = 0; i < particleCount; i++) {
                 let p = particles[i];
                 p.x += p.vx;
@@ -530,7 +529,6 @@
                     let p2 = particles[j];
                     let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
 
-                    // Bağlantı mesafesini hafifçe optimize ettik (100px) ki çok fazla çizgi oluşturup mobil cihazları yormasın
                     if (dist < 100) {
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
@@ -578,7 +576,7 @@
             const model = document.getElementById('model').value.trim();
 
             if (!model) {
-                alert('Lütfen telefon modelinizi girin!');
+                alert('Lütfen cihaz modelinizi girin!');
                 return;
             }
 
@@ -587,7 +585,11 @@
             let minSens = 130;
             let maxSens = 200;
 
-            if (brand === 'iPhone') {
+            if (brand === 'iPad') {
+                // iPad ekran alanı daha geniş olduğu için özel düşük-optimum aralık (Tablet Açıları)
+                minSens = 65;
+                maxSens = 125;
+            } else if (brand === 'iPhone') {
                 minSens = 80;
                 maxSens = 150;
             }
@@ -606,7 +608,9 @@
             document.getElementById('s-awp').innerText = awp;
             document.getElementById('s-free').innerText = free;
 
-            if (brand === 'iPhone') {
+            if (brand === 'iPad') {
+                document.getElementById('dpi-rec').innerText = "Önerilen Tablet HUD DPI / İşaretçi: Geniş Ekran Akıcı Mod (105 Hz Optimizasyon)";
+            } else if (brand === 'iPhone') {
                 document.getElementById('dpi-rec').innerText = "Önerilen iOS Tam İmleç Hızı: 120 (Maksimum Hassas)";
             } else {
                 document.getElementById('dpi-rec').innerText = "Önerilen DPI Değeri: " + getRandomInt(410, 600) + " DPI";
@@ -658,7 +662,7 @@
         }
 
         function escapeHtml(text) {
-            return text.repeat ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : text;
+            return text.replace ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : text;
         }
 
         loadComments();
